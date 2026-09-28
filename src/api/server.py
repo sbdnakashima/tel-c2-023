@@ -1,0 +1,46 @@
+"""AgentCore Platform v1.0"""
+
+# Standalone HTTP entry point for the agent.
+# Entry points are adapters only — no business logic here.
+# For platform-level routing, AgentGateway calls agent.invoke() directly.
+
+from typing import Any
+from uuid import uuid4
+
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+
+from framework.schemas.invocation_context import InvocationContext
+from framework.schemas.trust_level import TrustLevel
+from framework.secrets.context import bound_secrets
+from shared.secrets import factory as secrets_factory
+from src.graph.graph import Graph
+
+app = FastAPI(title="Agent")
+
+agent = Graph()
+agent.compile()
+# Replace namespace/agent_name to match the agent's manifest values.
+agent.provision_secrets(secrets_factory(namespace="tel", agent_name="TEL-C2-023"))
+
+
+class InvokeRequest(BaseModel):
+    input: str
+    session_id: str = ""
+
+
+@app.post("/invoke")
+async def invoke(req: InvokeRequest, request: Request) -> dict[str, Any]:
+    with bound_secrets(agent._secrets_provider):
+        ctx = InvocationContext(
+            session_id=req.session_id or str(uuid4()),
+            caller_trust_level=getattr(request.state, "trust_level", TrustLevel.ANONYMOUS),
+            caller_id=getattr(request.state, "caller_id", ""),
+        )
+        result: dict[str, Any] = agent.invoke(req.input, ctx=ctx)
+        return result
+
+
+@app.get("/health")
+def health() -> dict[str, Any]:
+    return {"status": "ok", "agent": "TEL-C2-023"}

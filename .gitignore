@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+.env
+*.egg
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Locally provided reference material — kept untracked on purpose.
+# These paths are populated for local reference only and must not be committed.
+CLAUDE.md
+security_rules/
+ci_stubs/
+MANIFEST.md

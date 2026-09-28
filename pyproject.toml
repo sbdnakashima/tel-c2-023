@@ -1,0 +1,40 @@
+[project]
+name = "tel-c2-023"
+version = "1.0.1"
+description = "Telecom Field Engineer Work Log Summarization & Completion Validation Agent — AgentCore Template"
+requires-python = ">=3.11"
+# The framework (agenticstar-agentcore) is not published on public PyPI; the
+# build environment supplies it from a private package registry. Pinning it
+# here would make `pip install -e .` fail because it cannot be resolved from
+# the default index.
+dependencies = [
+    "agenticstar-agentcore[marketplace,openai]==1.0.3",]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "pytest-cov==5.0.0",
+    "pytest-asyncio==1.4.0",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+]
+
+[build-system]
+requires = ["setuptools==68.2.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["framework.*", "shared.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["src.*"]
+disallow_subclassing_any = false

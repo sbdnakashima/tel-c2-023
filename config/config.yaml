@@ -1,0 +1,6 @@
+# Runtime configuration
+# Moved out of config/agent.yaml during the manifest migration.
+# Key names are kept as-is (legacy names are not silently renamed).
+
+max_retry: 3
+timeout_seconds: 30

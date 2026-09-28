@@ -1,0 +1,34 @@
+# Agent Manifest — AgentRegistry entry point
+# This file is required for AgentRegistry auto-discovery (lazy-load architecture)
+
+id: "TEL-C2-023"
+name: "Telecom Field Engineer Work Log Summarization & Completion Validation Agent"
+namespace: "tel"
+version: "1.0.1"
+enabled: true
+category: "Cat 2"
+generation_mode: "llm"
+industry: "TEL"
+
+# Level 2 base agent type
+base_type: "AgentBaseGraph"
+
+# Entry point (dotted path: module + class)
+class: "src.graph.graph.Graph"
+
+# Security
+required_trust_level: "VERIFIED_EXTERNAL"
+
+# Compile-time gates — declare every secret/extra actually used.
+# AZURE_OPENAI_*: ctx.secrets.require() in field_log_parser_node and
+# summary_generator_node (AzureOpenAIClient — api_key/endpoint/deployment).
+# openai: the same two nodes import AzureOpenAIClient (langchain_openai) at
+# runtime, so the extra must be declared (declaring [] would turn
+# fail-closed into fail-open).
+requires:
+  secrets:
+    - AZURE_OPENAI_API_KEY
+    - AZURE_OPENAI_ENDPOINT
+    - AZURE_OPENAI_DEPLOYMENT
+  extras:
+    - openai
